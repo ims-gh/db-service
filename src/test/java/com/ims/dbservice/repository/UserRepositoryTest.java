@@ -31,7 +31,6 @@ class UserRepositoryTest {
         );
 
         testUserRepository.save(user);
-
         assertTrue(testUserRepository.findUserByEmail(email).isPresent());
     }
 }
