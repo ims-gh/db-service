@@ -64,9 +64,21 @@ public class User {
         this.userRole = userRole;
     }
 
+    public User(String firstName, String lastName, LocalDate dob, String mobile, String email, String passwordHash, String userRole, LocalDateTime lastLogin) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dob = dob;
+        this.mobile = mobile;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.userRole = userRole;
+        this.lastLogin = lastLogin;
+    }
+
     public Integer getAge() {
         return Period.between(this.dob, LocalDate.now()).getYears();
     }
+
 
 
     }

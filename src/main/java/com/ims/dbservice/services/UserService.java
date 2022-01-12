@@ -1,6 +1,8 @@
 package com.ims.dbservice.services;
 
 import com.ims.dbservice.dto.UserDTO;
+import com.ims.dbservice.exceptions.UserAlreadyExistsException;
+import com.ims.dbservice.exceptions.UserDoesNotExistException;
 import com.ims.dbservice.models.User;
 import com.ims.dbservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -18,7 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public List<User> getUsers(){
+    public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
@@ -27,13 +29,13 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get();
         }
-        throw new IllegalStateException("User with email " + email + " does not exist.");
+        throw new UserDoesNotExistException("User with email " + email + " does not exist.");
     }
 
     public void addNewUser(User user) {
         Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
         if (userOptional.isPresent()) {
-            throw new IllegalStateException(
+            throw new UserAlreadyExistsException(
                     "Account with email " + userOptional.get().getEmail() + " already exists.");
         }
         userRepository.save(user);
@@ -50,7 +52,7 @@ public class UserService {
         LocalDateTime lastLogin = userDTO.getLastLogin();
 
         User user = userRepository.findUserByEmail(originalEmail)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new UserDoesNotExistException(
                         "user with email " + originalEmail + "  does not exist"));
 
         if (firstName != null && firstName.length() > 0 && !Objects.equals(user.getFirstName(), firstName)) {
@@ -81,7 +83,7 @@ public class UserService {
             Optional<User> userOptional = userRepository
                     .findUserByEmail(email);
             if (userOptional.isPresent()){
-                throw new IllegalStateException("email taken");
+                throw new UserAlreadyExistsException("email taken");
             }
             user.setEmail(email);
         }
@@ -90,7 +92,7 @@ public class UserService {
     public void deleteUser(String email) {
         Optional<User> userOptional = userRepository.findUserByEmail(email);
         if (!userOptional.isPresent()) {
-            throw new IllegalStateException("User does not exist");
+            throw new UserDoesNotExistException("User does not exist");
         }
         userRepository.delete(userOptional.get());
     }

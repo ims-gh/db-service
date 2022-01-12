@@ -18,11 +18,11 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<Object> getUsers(){
+    public ResponseEntity<Object> getAllUsers(){
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
-                .data(userService.getUsers())
+                .data(userService.getAllUsers())
                 .build();
     }
 
