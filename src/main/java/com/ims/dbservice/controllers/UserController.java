@@ -11,22 +11,23 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(path = "users")
+@RequestMapping
 @AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/users")
     public ResponseEntity<Object> getAllUsers(){
-        return ResponseHandler
+        /*return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
                 .data(userService.getAllUsers())
-                .build();
+                .build();*/
+        return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    @GetMapping("{email}")
+    @GetMapping("/user/{email}")
     public ResponseEntity<Object> getUserByEmail(@PathVariable String email){
         return ResponseHandler
                 .builder()
@@ -35,27 +36,35 @@ public class UserController {
                 .build();
     }
 
-    @PostMapping
+    @PostMapping("/user")
     public ResponseEntity<Object> addNewUser(@RequestBody User user){
         userService.addNewUser(user);
         return ResponseHandler
                 .builder()
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .message("User successfully created.")
                 .build();
     }
 
-    @PutMapping("{email}")
-    public ResponseEntity<String> updateUser(@PathVariable("email") String email,
-                                           @RequestBody UserDTO userDTO){
+    @PutMapping("/user/{email}")
+    public ResponseEntity<Object> updateUser(@PathVariable("email") String email,
+                                             @RequestBody UserDTO userDTO){
         userService.updateUser(email, userDTO);
-        return ResponseEntity.ok().body("User updated successfully");
+        return ResponseHandler
+                .builder()
+                .status(HttpStatus.OK)
+                .message("User updated successfully.")
+                .build();
     }
 
-    @DeleteMapping("{email}")
-    public ResponseEntity<String> deleteUser(@PathVariable String email){
+    @DeleteMapping("/user/{email}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String email){
         userService.deleteUser(email);
-        return ResponseEntity.ok().body("User deleted successfully.");
+        return ResponseHandler
+                .builder()
+                .status(HttpStatus.OK)
+                .message("User deleted successfully.")
+                .build();
     }
 
 

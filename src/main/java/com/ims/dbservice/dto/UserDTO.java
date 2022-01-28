@@ -17,4 +17,10 @@ public class UserDTO {
     private String passwordHash;
     private String userRole;
     private LocalDateTime lastLogin;
+
+    public UserDTO(String firstName, String lastName, String mobile) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.mobile = mobile;
+    }
 }

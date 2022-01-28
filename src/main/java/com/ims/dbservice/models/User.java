@@ -1,18 +1,20 @@
 package com.ims.dbservice.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
-@Table(name="user")
+@Table(name="users")
 @RequiredArgsConstructor
 public class User {
 
@@ -80,6 +82,5 @@ public class User {
     }
 
 
-
-    }
+}
 
