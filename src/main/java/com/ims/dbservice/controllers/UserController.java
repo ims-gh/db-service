@@ -19,12 +19,11 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<Object> getAllUsers(){
-        /*return ResponseHandler
+        return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
                 .data(userService.getAllUsers())
-                .build();*/
-        return ResponseEntity.ok().body(userService.getAllUsers());
+                .build();
     }
 
     @GetMapping("/user/{email}")

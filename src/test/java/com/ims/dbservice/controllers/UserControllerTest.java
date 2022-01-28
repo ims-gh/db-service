@@ -5,6 +5,7 @@ import com.ims.dbservice.dto.UserDTO;
 import com.ims.dbservice.models.User;
 import com.ims.dbservice.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,6 +70,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("should get all users")
     void getAllUsers() throws Exception {
         List<User> users = new ArrayList<>();
         users.add(ama);
@@ -76,15 +79,25 @@ class UserControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data", hasSize(2)))
                 .andDo(print());
     }
 
     @Test
-    void getUserByEmail() {
+    @DisplayName("should get user by email")
+    void getUserByEmail() throws Exception {
+        userService.addNewUser(kojo);
+        when(userService.getUserByEmail("kojo@gmail.com")).thenReturn(kojo);
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/"+"kojo@gmail.com")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data", isA(HashMap.class)))
+                .andDo(print());
     }
 
     @Test
+    @DisplayName("should add new user")
     void addNewUserTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         kojo = new User(
@@ -108,6 +121,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("should update existing user")
     void updateUser() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         UserDTO updatedAma = new UserDTO(
@@ -124,6 +138,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("should delete user")
     void deleteUser() throws Exception {
         userService.addNewUser(kojo);
         userService.deleteUser("kojo@gmail.com");
