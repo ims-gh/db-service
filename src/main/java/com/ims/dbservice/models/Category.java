@@ -1,9 +1,6 @@
 package com.ims.dbservice.models;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,6 +9,7 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Table(name="category")
+@NoArgsConstructor
 public class Category {
 
     @Id
@@ -26,4 +24,10 @@ public class Category {
 
     @Column
     private String description;
+
+    public Category(String categoryName, String description) {
+        this.categoryName = categoryName;
+        this.description = description;
+    }
+
 }
