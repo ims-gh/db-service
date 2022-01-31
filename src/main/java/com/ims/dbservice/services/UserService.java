@@ -6,6 +6,7 @@ import com.ims.dbservice.exceptions.UserDoesNotExistException;
 import com.ims.dbservice.models.User;
 import com.ims.dbservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,33 +17,37 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
 
     public List<User> getAllUsers(){
+        log.info("Getting all users");
         return userRepository.findAll();
     }
 
     public User getUserByEmail(String email){
+        log.info("Finding user with email {}", email);
         Optional<User> userOptional = userRepository.findUserByEmail(email);
         if (userOptional.isPresent()) {
             return userOptional.get();
         }
-        throw new UserDoesNotExistException("User with email " + email + " does not exist.");
+        throw new UserDoesNotExistException(email);
     }
 
     public void addNewUser(User user) {
+        log.info("Adding new user: {}", user);
         Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
         if (userOptional.isPresent()) {
-            throw new UserAlreadyExistsException(
-                    "Account with email " + userOptional.get().getEmail() + " already exists.");
+            throw new UserAlreadyExistsException(userOptional.get().getEmail());
         }
         userRepository.save(user);
     }
 
     @Transactional
     public void updateUser(String originalEmail, UserDTO userDTO) {
+        log.info("Extracting user details");
         String firstName = userDTO.getFirstName();
         String lastName = userDTO.getLastName();
         String mobile = userDTO.getMobile();
@@ -51,10 +56,10 @@ public class UserService {
         String userRole = userDTO.getUserRole();
         LocalDateTime lastLogin = userDTO.getLastLogin();
 
+        log.info("Finding user with email {}", originalEmail);
         User user = userRepository.findUserByEmail(originalEmail)
-                .orElseThrow(() -> new UserDoesNotExistException(
-                        "user with email " + originalEmail + "  does not exist"));
-
+                .orElseThrow(() -> new UserDoesNotExistException(originalEmail));
+        log.info("Updating user with email {}", email );
         if (firstName != null && firstName.length() > 0 && !Objects.equals(user.getFirstName(), firstName)) {
             user.setFirstName(firstName);
         }
@@ -83,16 +88,17 @@ public class UserService {
             Optional<User> userOptional = userRepository
                     .findUserByEmail(email);
             if (userOptional.isPresent()){
-                throw new UserAlreadyExistsException("email taken");
+                throw new UserAlreadyExistsException(email);
             }
             user.setEmail(email);
         }
     }
 
     public void deleteUser(String email) {
+        log.info("Deleting user with email {}", email);
         Optional<User> userOptional = userRepository.findUserByEmail(email);
         if (!userOptional.isPresent()) {
-            throw new UserDoesNotExistException("User does not exist");
+            throw new UserDoesNotExistException(email);
         }
         userRepository.delete(userOptional.get());
     }

@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity<Object> getUserByEmail(@PathVariable String email){
         return ResponseHandler
                 .builder()
-                .status(HttpStatus.OK)
+                .status(HttpStatus.FOUND)
                 .data(userService.getUserByEmail(email))
                 .build();
     }
