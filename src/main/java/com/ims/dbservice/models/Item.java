@@ -1,3 +1,4 @@
+/*
 package com.ims.dbservice.models;
 
 import lombok.Data;
@@ -46,3 +47,4 @@ public class Item {
     @JoinColumn(name="category_id")
     private Category category;
 }
+*/

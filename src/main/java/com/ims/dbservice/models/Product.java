@@ -1,16 +1,17 @@
 package com.ims.dbservice.models;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "product")
+@NoArgsConstructor
 public class Product {
 
     @Id
@@ -27,10 +28,13 @@ public class Product {
     private String slug;
 
     @Column(nullable = false)
-    private Float price;
+    private Double price;
 
     @Column
     private String description;
+
+    @Column
+    private String category;
 
     @CreationTimestamp
     @Column(columnDefinition = "timestamp default current_timestamp")
@@ -39,9 +43,11 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name="category_id")
-    private Category category;
-
-
+    public Product(String name, String slug, Double price, String description, String category) {
+        this.name = name;
+        this.slug = slug;
+        this.price = price;
+        this.description = description;
+        this.category = category;
+    }
 }
