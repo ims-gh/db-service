@@ -1,14 +1,11 @@
 package com.ims.dbservice.models;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -33,9 +30,6 @@ public class User {
 
     @Column(nullable = false)
     private LocalDate dob;
-
-    @Transient
-    private Integer age;
 
     @Column(nullable = false)
     private String mobile;
@@ -76,11 +70,6 @@ public class User {
         this.userRole = userRole;
         this.lastLogin = lastLogin;
     }
-
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
-    }
-
 
 }
 

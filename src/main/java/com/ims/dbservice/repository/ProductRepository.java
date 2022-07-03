@@ -1,13 +1,13 @@
 package com.ims.dbservice.repository;
 
-import com.ims.dbservice.models.Category;
+import com.ims.dbservice.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<Category> findByCategoryName(String categoryName);
+    Optional<Product> findBySlug(String productSlug);
 }

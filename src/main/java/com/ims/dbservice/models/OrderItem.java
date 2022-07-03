@@ -18,37 +18,25 @@ public class OrderItem {
     )
     @Column
     private Long orderItemId;
-
     @Column(nullable = false)
+    private String productSlug;
+    @Column
     private String inscription;
-
-    @Column(nullable = false)
+    @Column
     private String colour;
-
     @Column(nullable = false)
     private Float price;
-
-    @Column(nullable = false)
+    @Column
     private Float discount;
-
     @Column
     private String image;
-
     @Column
     private String otherDetails;
-
     @CreationTimestamp
     @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name="order_id")
-    private Order order;
 
-    @ManyToOne
-    @JoinColumn(name="product_id")
-    private Product product;
 }

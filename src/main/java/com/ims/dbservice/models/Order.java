@@ -6,6 +6,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,9 +25,6 @@ public class Order {
     private String sessionId;
 
     @Column(nullable = false)
-    private LocalDateTime orderDate;
-
-    @Column(nullable = false)
     private String buyersName;
 
     @Column(nullable = false)
@@ -34,10 +33,10 @@ public class Order {
     @Column
     private String buyersSocial;
 
-    @Column(nullable = false)
+    @Column
     private String recipientsName;
 
-    @Column(nullable = false)
+    @Column
     private String recipientsNumber;
 
     @Column(nullable = false)
@@ -46,17 +45,17 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime deliveryDate;
 
-    @Column(nullable = false)
+    @Column
     private String otherDetails;
 
-    @Column(nullable = false)
-    private Float discount;
+    @Column
+    private Double discount = 0.0;
 
     @Column(nullable = false)
-    private Float subtotal;
+    private Double subtotal;
 
     @Column(nullable = false)
-    private Float total;
+    private Double total;
 
     @Column(nullable = false)
     private String orderStatus;
@@ -66,13 +65,13 @@ public class Order {
 
     @CreationTimestamp
     @Column(columnDefinition = "timestamp default current_timestamp")
-    private LocalDateTime createdAt;
+    private LocalDateTime orderDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
+    // TODO: SORT OUT THIS RELATIONSHIP
+//    @Column
+//    private List<String> orderItemId;
 
 }

@@ -29,11 +29,8 @@ public class UserService {
 
     public User getUserByEmail(String email){
         log.info("Finding user with email {}", email);
-        Optional<User> userOptional = userRepository.findUserByEmail(email);
-        if (userOptional.isPresent()) {
-            return userOptional.get();
-        }
-        throw new UserDoesNotExistException(email);
+        return userRepository.findUserByEmail(email).orElseThrow(
+                () -> new UserDoesNotExistException(email));
     }
 
     public void addNewUser(User user) {
@@ -59,6 +56,7 @@ public class UserService {
         log.info("Finding user with email {}", originalEmail);
         User user = userRepository.findUserByEmail(originalEmail)
                 .orElseThrow(() -> new UserDoesNotExistException(originalEmail));
+
         log.info("Updating user with email {}", email );
         if (firstName != null && firstName.length() > 0 && !Objects.equals(user.getFirstName(), firstName)) {
             user.setFirstName(firstName);
