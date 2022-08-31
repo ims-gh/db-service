@@ -38,7 +38,6 @@ public class Product {
     private String category;
 
     @CreationTimestamp
-    @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

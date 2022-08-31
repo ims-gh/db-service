@@ -46,13 +46,14 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/user/{email}")
+    @PatchMapping("/user/{email}")
     public ResponseEntity<Object> updateUser(@PathVariable("email") String email,
                                              @RequestBody UserDTO userDTO){
         userServiceImpl.updateUser(email, userDTO);
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
+                .data(userDTO)
                 .message("User updated successfully.")
                 .build();
     }

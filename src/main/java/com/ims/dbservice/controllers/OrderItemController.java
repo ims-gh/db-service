@@ -51,6 +51,7 @@ public class OrderItemController {
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
+                .data(orderItemDTO)
                 .message("OrderItem successfully updated.")
                 .build();
     }

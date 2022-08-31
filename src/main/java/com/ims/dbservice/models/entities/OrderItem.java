@@ -38,7 +38,6 @@ public class OrderItem {
     private String orderId;  //TODO: add orderId as foreign key
 
     @CreationTimestamp
-    @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;

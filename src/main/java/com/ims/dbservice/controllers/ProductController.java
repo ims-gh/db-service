@@ -41,6 +41,7 @@ public class ProductController {
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.CREATED)
+                .data(product)
                 .message("Product successfully created")
                 .build();
     }
@@ -52,6 +53,7 @@ public class ProductController {
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
+                .data(productDTO)
                 .message("Product successfully updated.")
                 .build();
     }
