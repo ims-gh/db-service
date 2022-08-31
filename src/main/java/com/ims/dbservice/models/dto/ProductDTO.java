@@ -1,4 +1,4 @@
-package com.ims.dbservice.dto;
+package com.ims.dbservice.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

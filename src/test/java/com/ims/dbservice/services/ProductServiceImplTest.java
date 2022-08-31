@@ -1,11 +1,12 @@
 package com.ims.dbservice.services;
 
-import com.ims.dbservice.dto.ProductDTO;
+import com.ims.dbservice.models.dto.ProductDTO;
 import com.ims.dbservice.exceptions.ProductAlreadyExistsException;
 import com.ims.dbservice.exceptions.ProductDoesNotExistException;
 import com.ims.dbservice.models.Category;
-import com.ims.dbservice.models.Product;
+import com.ims.dbservice.models.entities.Product;
 import com.ims.dbservice.repository.ProductRepository;
+import com.ims.dbservice.services.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,13 +26,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
-class ProductServiceTest {
+class ProductServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productServiceImpl;
 
     Product sixCupcakes;
     Product eightInchSingle;
@@ -60,7 +61,7 @@ class ProductServiceTest {
         when(productRepository.findAll())
                 .thenReturn(products);
 
-        List<Product> allProducts = productService.getAllProducts();
+        List<Product> allProducts = productServiceImpl.getAllProducts();
         assertAll(
                 () -> assertEquals(2, allProducts.size()),
                 () -> assertTrue(allProducts.get(1).equals(sixCupcakes)),
@@ -84,7 +85,7 @@ class ProductServiceTest {
                     "6inch full cake",
                     Category.FullCake.name()
             );
-            productService.addNewProduct(sixInchDouble);
+            productServiceImpl.addNewProduct(sixInchDouble);
             verify(productRepository).save(productArgumentCaptor.capture());
 
             Product capturedSixInch = productArgumentCaptor.getValue();
@@ -101,7 +102,7 @@ class ProductServiceTest {
                     .thenReturn(Optional.of(eightInchSingle));
             assertThrows(
                     ProductAlreadyExistsException.class,
-                    () -> productService.addNewProduct(eightInchSingle));
+                    () -> productServiceImpl.addNewProduct(eightInchSingle));
         }
     }
 
@@ -114,7 +115,7 @@ class ProductServiceTest {
             String productSlug = "8-inch-single";
             when(productRepository.findBySlug(productSlug))
                     .thenReturn(Optional.of(eightInchSingle));
-            Product testProduct = productService.getProductBySlug(productSlug);
+            Product testProduct = productServiceImpl.getProductBySlug(productSlug);
             assertEquals(eightInchSingle, testProduct);
         }
 
@@ -126,7 +127,7 @@ class ProductServiceTest {
                     .thenReturn(Optional.empty());
             assertThrows(
                     ProductDoesNotExistException.class,
-                    () -> productService.getProductBySlug(productSlug),
+                    () -> productServiceImpl.getProductBySlug(productSlug),
                     String.format("Product %s does not exist", productSlug)
             );
         }
@@ -145,7 +146,7 @@ class ProductServiceTest {
                     135.5);
             when(productRepository.findBySlug(slug))
                     .thenReturn(Optional.of(eightInchSingle));
-            productService.updateProduct(slug, productDTO);
+            productServiceImpl.updateProduct(slug, productDTO);
             assertAll(
                     () -> assertEquals("8 inch single layer full cake", eightInchSingle.getName()),
                     () -> assertEquals(135.5F, eightInchSingle.getPrice()),
@@ -165,7 +166,7 @@ class ProductServiceTest {
                     .thenReturn(Optional.empty());
             assertThrows(
                     ProductDoesNotExistException.class,
-                    () -> productService.updateProduct(invalidSlug, b6DTO)
+                    () -> productServiceImpl.updateProduct(invalidSlug, b6DTO)
             );
         }
 
@@ -176,7 +177,7 @@ class ProductServiceTest {
             ProductDTO b6DTO = new ProductDTO(0.0);
             when(productRepository.findBySlug(b6Slug))
                     .thenReturn(Optional.of(sixCupcakes));
-            productService.updateProduct(b6Slug, b6DTO);
+            productServiceImpl.updateProduct(b6Slug, b6DTO);
             assertAll(
                     () -> assertEquals("Box of 6 Cupcakes", sixCupcakes.getName()),
                     () -> assertNotEquals(0.0F, sixCupcakes.getPrice())
@@ -193,7 +194,7 @@ class ProductServiceTest {
                     .thenReturn(Optional.empty());
             assertThrows(
                     ProductDoesNotExistException.class,
-                    () -> productService.updateProduct(slug, tenDTO)
+                    () -> productServiceImpl.updateProduct(slug, tenDTO)
             );
         }
     }
@@ -208,7 +209,7 @@ class ProductServiceTest {
             String slug = "b6";
             when(productRepository.findBySlug(slug))
                     .thenReturn(Optional.of(sixCupcakes));
-            productService.deleteProduct(slug);
+            productServiceImpl.deleteProduct(slug);
             verify(productRepository).delete(sixCupcakes);
         }
 
@@ -220,7 +221,7 @@ class ProductServiceTest {
                     .thenReturn(Optional.empty());
             assertThrows(
                     ProductDoesNotExistException.class,
-                    () -> productService.deleteProduct(slug)
+                    () -> productServiceImpl.deleteProduct(slug)
             );
         }
 

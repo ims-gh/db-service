@@ -1,10 +1,11 @@
 package com.ims.dbservice.services;
 
-import com.ims.dbservice.dto.UserDTO;
+import com.ims.dbservice.models.dto.UserDTO;
 import com.ims.dbservice.exceptions.UserAlreadyExistsException;
 import com.ims.dbservice.exceptions.UserDoesNotExistException;
-import com.ims.dbservice.models.User;
+import com.ims.dbservice.models.entities.User;
 import com.ims.dbservice.repository.UserRepository;
+import com.ims.dbservice.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,23 +21,22 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService testUserService;
+    private UserServiceImpl testUserServiceImpl;
 
     String email;
     User user;
 
     @BeforeEach
     void setUp() {
-        testUserService = new UserService(userRepository);
+        testUserServiceImpl = new UserServiceImpl(userRepository);
         email = "hello@gmail.com";
         user = new User(
                 "hello",
@@ -52,13 +52,13 @@ class UserServiceTest {
 
     @Test
     void getAllUsersTest() {
-        testUserService.getAllUsers();
+        testUserServiceImpl.getAllUsers();
         verify(userRepository).findAll();
     }
 
     @Test
     void addNewUser() {
-        testUserService.addNewUser(user);
+        testUserServiceImpl.addNewUser(user);
 
         // Argument captor is used to check
         // whether the argument received by the userRepository is the same as what was passed to the userService
@@ -74,15 +74,15 @@ class UserServiceTest {
     void addUserTestThrowsException() {
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.of(user));
-        assertThrows(UserAlreadyExistsException.class, () -> testUserService.addNewUser(user));
+        assertThrows(UserAlreadyExistsException.class, () -> testUserServiceImpl.addNewUser(user));
     }
 
     @Test
     void getUserByEmailTest() {
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.of(user));
-        testUserService.getUserByEmail(email);
-        assertTrue(testUserService.getUserByEmail(email).equals(user));
+        testUserServiceImpl.getUserByEmail(email);
+        assertTrue(testUserServiceImpl.getUserByEmail(email).equals(user));
     }
 
     @Test
@@ -90,7 +90,7 @@ class UserServiceTest {
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.empty());
         String errorMessage = "User with email " + email + " does not exist.";
-        assertThrows(UserDoesNotExistException.class, () -> testUserService.getUserByEmail(email), errorMessage);
+        assertThrows(UserDoesNotExistException.class, () -> testUserServiceImpl.getUserByEmail(email), errorMessage);
     }
 
     @Test
@@ -106,7 +106,7 @@ class UserServiceTest {
 
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.of(user));
-        testUserService.updateUser(email, updatedUser);
+        testUserServiceImpl.updateUser(email, updatedUser);
         assertAll(
                 () -> assertTrue(user.getFirstName().equals(updatedUser.getFirstName())),
                 () -> assertTrue(user.getLastName().equals(updatedUser.getLastName())),
@@ -132,7 +132,7 @@ class UserServiceTest {
         given(userRepository.findUserByEmail(email))
                 .willReturn(Optional.empty());
         assertThrows(UserDoesNotExistException.class,
-                        () -> testUserService.updateUser(email, updatedUser), "user with email " + email + "  does not exist");
+                        () -> testUserServiceImpl.updateUser(email, updatedUser), "user with email " + email + "  does not exist");
 
     }
 
@@ -164,7 +164,7 @@ class UserServiceTest {
         given(userRepository.findUserByEmail(newEmail))
                 .willReturn(Optional.of(newUser));
        assertThrows(UserAlreadyExistsException.class,
-               () -> testUserService.updateUser(email, updatedUser), "email taken");
+               () -> testUserServiceImpl.updateUser(email, updatedUser), "email taken");
 
     }
 
@@ -173,7 +173,7 @@ class UserServiceTest {
     void deleteUserTest() {
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.of(user));
-        testUserService.deleteUser(email);
+        testUserServiceImpl.deleteUser(email);
         verify(userRepository).delete(user);
     }
 
@@ -183,7 +183,7 @@ class UserServiceTest {
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.empty());
         String errorMessage = "User does not exist.";
-        assertThrows(UserDoesNotExistException.class, () -> testUserService.deleteUser(email), errorMessage);
+        assertThrows(UserDoesNotExistException.class, () -> testUserServiceImpl.deleteUser(email), errorMessage);
 
     }
 }

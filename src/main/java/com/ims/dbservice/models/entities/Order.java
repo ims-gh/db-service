@@ -1,4 +1,4 @@
-package com.ims.dbservice.models;
+package com.ims.dbservice.models.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -6,8 +6,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 
 @Data
 @Entity
@@ -15,11 +16,8 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
-    @Column
-    private Long orderId;
+    @GeneratedValue
+    private UUID orderId;
 
     @Column(nullable = false)
     private String sessionId;
@@ -72,6 +70,6 @@ public class Order {
 
     // TODO: SORT OUT THIS RELATIONSHIP
 //    @Column
-//    private List<String> orderItemId;
+//    private List<OrderItem> orderItems;
 
 }

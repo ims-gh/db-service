@@ -1,6 +1,6 @@
 package com.ims.dbservice.repository;
 
-import com.ims.dbservice.models.entities.Product;
+import com.ims.dbservice.models.entities.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, UUID> {
+public interface OrderItemRepository extends JpaRepository<OrderItem, UUID> {
 
-    Optional<Product> findBySlug(String productSlug);
+    Optional<OrderItem> findByOrderId(String uuid);
+
 }
