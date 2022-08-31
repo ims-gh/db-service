@@ -1,9 +1,9 @@
 package com.ims.dbservice.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ims.dbservice.dto.UserDTO;
-import com.ims.dbservice.models.User;
-import com.ims.dbservice.services.UserService;
+import com.ims.dbservice.models.dto.UserDTO;
+import com.ims.dbservice.models.entities.User;
+import com.ims.dbservice.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -37,7 +36,7 @@ class UserControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     private String email;
     private User ama;
@@ -75,7 +74,7 @@ class UserControllerTest {
         List<User> users = new ArrayList<>();
         users.add(ama);
         users.add(kojo);
-        when(userService.getAllUsers()).thenReturn(users);
+        when(userServiceImpl.getAllUsers()).thenReturn(users);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/")
                         .accept(MediaType.APPLICATION_JSON))
@@ -87,8 +86,8 @@ class UserControllerTest {
     @Test
     @DisplayName("should get user by email")
     void getUserByEmail() throws Exception {
-        userService.addNewUser(kojo);
-        when(userService.getUserByEmail("kojo@gmail.com")).thenReturn(kojo);
+        userServiceImpl.addNewUser(kojo);
+        when(userServiceImpl.getUserByEmail("kojo@gmail.com")).thenReturn(kojo);
         mockMvc.perform(MockMvcRequestBuilders.get("/user/"+"kojo@gmail.com")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -110,7 +109,7 @@ class UserControllerTest {
                 "user"
         );
 
-        userService.addNewUser(kojo);
+        userServiceImpl.addNewUser(kojo);
         objectMapper.findAndRegisterModules();
         String userJSON = objectMapper.writeValueAsString(kojo);
 
@@ -127,8 +126,8 @@ class UserControllerTest {
         UserDTO updatedAma = new UserDTO(
                 "Amar", "Owusu", "020374839");
 
-        userService.addNewUser(ama);
-        userService.updateUser(email, updatedAma);
+        userServiceImpl.addNewUser(ama);
+        userServiceImpl.updateUser(email, updatedAma);
 
         String userJSON = objectMapper.writeValueAsString(updatedAma);
         mockMvc.perform(MockMvcRequestBuilders.put("/user/" + email)
@@ -140,8 +139,8 @@ class UserControllerTest {
     @Test
     @DisplayName("should delete user")
     void deleteUser() throws Exception {
-        userService.addNewUser(kojo);
-        userService.deleteUser("kojo@gmail.com");
+        userServiceImpl.addNewUser(kojo);
+        userServiceImpl.deleteUser("kojo@gmail.com");
         mockMvc.perform(MockMvcRequestBuilders.delete("/user/" + "kojo@gmail.com")
                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());

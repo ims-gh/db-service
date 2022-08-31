@@ -1,25 +1,26 @@
-package com.ims.dbservice.models;
+package com.ims.dbservice.models.entities;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "product")
 @NoArgsConstructor
 public class Product {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
-    @Column
-    private Long productId;
+    @GeneratedValue
+    private UUID productId;
 
     @Column(nullable = false)
     private String name;

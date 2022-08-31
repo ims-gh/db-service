@@ -1,23 +1,23 @@
-package com.ims.dbservice.models;
+package com.ims.dbservice.models.entities;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "order_item")
 public class OrderItem {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
-    @Column
-    private Long orderItemId;
+    @GeneratedValue
+    private UUID orderItemId;
     @Column(nullable = false)
     private String productSlug;
     @Column
@@ -27,16 +27,24 @@ public class OrderItem {
     @Column(nullable = false)
     private Float price;
     @Column
+    private Float finalPrice;
+    @Column
     private Float discount;
     @Column
     private String image;
     @Column
     private String otherDetails;
+    @Column
+    private String orderId;  //TODO: add orderId as foreign key
+
     @CreationTimestamp
     @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
+    public void setDiscount(Float discount) {
+        this.discount = discount;
+        this.finalPrice = this.price * discount;
+    }
 }

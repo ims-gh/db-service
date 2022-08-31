@@ -1,26 +1,25 @@
-package com.ims.dbservice.models;
+package com.ims.dbservice.models.entities;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @ToString
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @RequiredArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
-    @Column
-    private Long userId;
+    @GeneratedValue
+    private UUID userId;
 
     @Column(nullable = false)
     private String firstName;
@@ -49,6 +48,10 @@ public class User {
     @CreationTimestamp
     @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(columnDefinition = "timestamp default current_timestamp")
+    private LocalDateTime updatedAt;
 
     public User(String firstName, String lastName, LocalDate dob, String mobile, String email, String passwordHash, String userRole) {
         this.firstName = firstName;

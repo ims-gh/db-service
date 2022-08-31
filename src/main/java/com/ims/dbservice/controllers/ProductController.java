@@ -1,10 +1,11 @@
 package com.ims.dbservice.controllers;
 
-import com.ims.dbservice.dto.ProductDTO;
+import com.ims.dbservice.models.dto.ProductDTO;
 import com.ims.dbservice.exceptions.ResponseHandler;
-import com.ims.dbservice.models.Product;
-import com.ims.dbservice.services.ProductService;
+import com.ims.dbservice.models.entities.Product;
+import com.ims.dbservice.services.impl.ProductServiceImpl;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductServiceImpl productServiceImpl;
 
     @GetMapping("/products")
     public ResponseEntity<Object> getAllProducts(){
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
-                .data(productService.getAllProducts())
+                .data(productServiceImpl.getAllProducts())
                 .build();
     }
 
@@ -30,13 +31,13 @@ public class ProductController {
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.FOUND)
-                .data(productService.getProductBySlug(slug))
+                .data(productServiceImpl.getProductBySlug(slug))
                 .build();
     }
 
     @PostMapping("/product")
     public ResponseEntity<Object> addNewProduct(@RequestBody Product product){
-        productService.addNewProduct(product);
+        productServiceImpl.addNewProduct(product);
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.CREATED)
@@ -44,10 +45,10 @@ public class ProductController {
                 .build();
     }
 
-    @PatchMapping("/product")
-    public ResponseEntity<Object> updateProduct(@RequestParam("slug") String slug,
+    @PatchMapping("/product/{slug}")
+    public ResponseEntity<Object> updateProduct(@PathVariable("slug") String slug,
                                                  @RequestBody ProductDTO productDTO){
-        productService.updateProduct(slug, productDTO);
+        productServiceImpl.updateProduct(slug, productDTO);
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
@@ -57,7 +58,7 @@ public class ProductController {
 
     @DeleteMapping("/product")
     public ResponseEntity<Object> deleteProduct(@RequestParam String slug){
-        productService.deleteProduct(slug);
+        productServiceImpl.deleteProduct(slug);
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)

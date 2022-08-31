@@ -1,10 +1,8 @@
 package com.ims.dbservice.repository;
 
-import com.ims.dbservice.models.User;
-import org.junit.jupiter.api.BeforeEach;
+import com.ims.dbservice.models.entities.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDate;
