@@ -1,23 +1,30 @@
-package com.ims.dbservice.models.entities;
+package com.ims.ordermanagement.models.entities;
 
-import lombok.Data;
+import com.ims.ordermanagement.config.OrderIdGenerator;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "orders")
 public class Order {
 
     @Id
-    @GeneratedValue
-    private UUID orderId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_seq")
+    @GenericGenerator(
+            name = "order_seq",
+            strategy = "com.ims.ordermanagement.config.OrderIdGenerator",
+            parameters = { @org.hibernate.annotations.Parameter(name = OrderIdGenerator.INCREMENT_PARAM, value = "50")})
+    private String orderId;
 
     @Column(nullable = false)
     private String sessionId;
@@ -62,14 +69,11 @@ public class Order {
     private String paymentMethod;
 
     @CreationTimestamp
-    @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime orderDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // TODO: SORT OUT THIS RELATIONSHIP
-//    @Column
+//    @OneToMany(mappedBy = "order")
 //    private List<OrderItem> orderItems;
-
 }
