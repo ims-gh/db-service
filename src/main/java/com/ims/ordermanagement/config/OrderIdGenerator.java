@@ -11,7 +11,6 @@ import org.hibernate.type.Type;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -19,7 +18,7 @@ import java.util.TimeZone;
 public class OrderIdGenerator extends SequenceStyleGenerator {
 
     public static final String NUMBER_FORMAT_PARAMETER = "numberFormat";
-    public static final String NUMBER_FORMAT_DEFAULT = "%02d";
+    public static final String NUMBER_FORMAT_DEFAULT = "%04d";
 
     public static final String DATE_NUMBER_SEPARATOR_PARAMETER = "dateNumberSeparator";
     public static final String DATE_NUMBER_SEPARATOR_DEFAULT = "-";
@@ -47,4 +46,6 @@ public class OrderIdGenerator extends SequenceStyleGenerator {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(new Date()).toUpperCase();
     }
+
+
 }
