@@ -21,7 +21,13 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 //    @Query("select o from Order o where o.deliveryDate between :start and :end")
     Optional<List<Order>> findByDeliveryDateBetween(LocalDateTime dateStart, LocalDateTime dateEnd);
 
-    Optional<List<Order>> findByDeliveryDateBetweenAndOrderStatus(LocalDateTime dateStart, LocalDateTime dateEnd, String status);
+    Optional<List<Order>> findByDeliveryDateBetweenAndOrderStatusIn(LocalDateTime dateStart, LocalDateTime dateEnd, List<String> statuses);
 
-    Optional<List<Order>> findByOrderStatusAndDeliveryLocation(String status, String location);
+    Optional<List<Order>> findByOrderStatusInAndDeliveryLocationIn(List<String> status, List<String> location);
+
+    Optional<List<Order>> findByBuyersName(String buyersName);
+
+    Optional<List<Order>> findByRecipientsName(String recipientsName);
+
+    Optional<List<Order>> findByPaymentMethod(String paymentMethod);
 }

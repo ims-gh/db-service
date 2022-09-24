@@ -3,7 +3,6 @@ package com.ims.ordermanagement.services;
 import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.exceptions.ProductAlreadyExistsException;
 import com.ims.ordermanagement.exceptions.ProductDoesNotExistException;
-import com.ims.ordermanagement.models.Category;
 import com.ims.ordermanagement.models.entities.Product;
 import com.ims.ordermanagement.repository.ProductRepository;
 import com.ims.ordermanagement.services.impl.ProductServiceImpl;
@@ -44,13 +43,13 @@ class ProductServiceImplTest {
                 "b6",
                 55.0,
                 "A box of 6 cupcakes with varied toppings",
-                Category.Cupcakes.name());
+                Product.Category.CUPCAKES.name());
         eightInchSingle = new Product(
                 "8 inch single layer cake",
                 "8-inch-single",
                 120.0,
                 "8inch full cake",
-                Category.FullCake.name());
+                Product.Category.FULL_CAKE.name());
 
     }
 
@@ -65,7 +64,7 @@ class ProductServiceImplTest {
         assertAll(
                 () -> assertEquals(2, allProducts.size()),
                 () -> assertTrue(allProducts.get(1).equals(sixCupcakes)),
-                () -> assertEquals("FullCake", allProducts.get(0).getCategory())
+                () -> assertEquals("FULL_CAKE", allProducts.get(0).getCategory())
         );
     }
 
@@ -83,7 +82,7 @@ class ProductServiceImplTest {
                     "6-inch-double",
                     140.0,
                     "6inch full cake",
-                    Category.FullCake.name()
+                    Product.Category.FULL_CAKE.name()
             );
             productServiceImpl.addNewProduct(sixInchDouble);
             verify(productRepository).save(productArgumentCaptor.capture());

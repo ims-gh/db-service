@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,14 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductBySlug(String slug) {
         log.info("Finding product with Name {}", slug);
         return findOrThrowError(slug);
+    }
+
+    @Override
+    public List<Product> getProductByCategory(List<String> category) {
+        List<String> categories = new ArrayList<>();
+        category.forEach(cat -> categories.add(Product.Category.getValue(cat)));
+        log.info("Finding product with categories {}", categories);
+        return productRepository.findByCategoryIn(categories).orElse(new ArrayList<>());
     }
 
     @Override

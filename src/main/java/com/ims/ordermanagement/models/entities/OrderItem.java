@@ -1,6 +1,8 @@
 package com.ims.ordermanagement.models.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "order_items")
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderItem implements DbEntity {
 
     @Id
@@ -35,9 +39,6 @@ public class OrderItem implements DbEntity {
     @Column
     private String otherDetails;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "orderId", nullable = false)
-//    private Order order;  //TODO: add orderId as foreign key
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface OrderItemService extends DBService {
 
-    public List<OrderItem> getAllOrderItems();
+    List<OrderItem> getAllOrderItems();
 
-    public OrderItem getByOrderItemId(String uuid);
+    OrderItem getByOrderItemId(String uuid);
 
-    public String addNewOrderItem(OrderItem orderItem);
+    String addNewOrderItem(OrderItem orderItem);
 
-    public void updateOrderItem(String uuid, OrderItemDTO orderItemDTO);
+    void updateOrderItem(String uuid, OrderItemDTO orderItemDTO);
 
-    public void deleteOrderItem(String uuid);
+    void deleteOrderItem(String uuid);
 
 
 

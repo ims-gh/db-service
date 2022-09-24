@@ -1,25 +1,22 @@
 package com.ims.ordermanagement.controllers;
 
-import com.ims.ordermanagement.models.Category;
 import com.ims.ordermanagement.models.entities.Product;
+import com.ims.ordermanagement.services.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest
 class ProductControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
+    @SpyBean
+    private ProductController productController;
 
     @MockBean
-    private ProductController productController;
+    private ProductServiceImpl productService;
 
     Product sixCupcakes;
     Product eightInchSingle;
@@ -31,13 +28,13 @@ class ProductControllerTest {
                 "b6",
                 55.0,
                 "A box of 6 cupcakes with varied toppings",
-                Category.Cupcakes.name());
+                Product.Category.CUPCAKES.name());
         eightInchSingle = new Product(
                 "8 inch single layer cake",
                 "8-inch-single",
                 120.0,
                 "8inch full cake",
-                Category.FullCake.name());
+                Product.Category.FULL_CAKE.name());
     }
 
     @Test

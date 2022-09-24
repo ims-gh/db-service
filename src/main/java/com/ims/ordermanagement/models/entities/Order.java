@@ -8,17 +8,20 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 @Getter
 @Setter
 @Entity
 @Table(name = "orders")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Order implements DbEntity {
 
     @Id
@@ -50,6 +53,12 @@ public class Order implements DbEntity {
     @Column(nullable = false)
     private String deliveryLocation;
 
+    @Column
+    private String specificLocation;
+
+    @Column
+    private String googlePlusCode;
+
     @Column(nullable = false)
     private LocalDateTime deliveryDate;
 
@@ -59,11 +68,11 @@ public class Order implements DbEntity {
     @Column
     private Double discount = 0.0;
 
-    @Column(nullable = false)
-    private Double subtotal;
+    @Column
+    private Double subTotal = 0.0;
 
     @Column(nullable = false)
-    private Double total;
+    private Double total = 0.0;
 
     @Column(nullable = false)
     private String orderStatus;
@@ -77,27 +86,64 @@ public class Order implements DbEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-//    @OneToMany(mappedBy = "order")
-//    private List<OrderItem> orderItems;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    public void addOrderItems(List<OrderItem> orderItemList) {
+        orderItems.addAll(orderItemList);
+    }
 
     public void setDiscount(Double discount) {
         this.discount = discount;
-        this.total = (discount == 0.0) ? this.subtotal : this.subtotal * (1 - discount);
+        setTotal();
+    }
+
+    public void setTotal() {
+        this.total = (this.discount == 0.0) ? this.subTotal : this.subTotal * (1 - this.discount);
+    }
+
+    public void setSubTotal(List<OrderItem> orderItemList) {
+        orderItemList.forEach(item -> this.subTotal += item.getFinalPrice());
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = OrderStatus.getValue(orderStatus);
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = PaymentMethod.getValue(paymentMethod);
     }
 
     @AllArgsConstructor
-    public enum OrderStatus{
+    public enum OrderStatus {
         UNPAID,
         PAID,
         DELIVERED,
+        PICKED_UP,
         CANCELLED,
         UNKNOWN;
 
-        public static String getValue(String status){
+        public static String getValue(String status) {
             return Arrays.stream(OrderStatus.values())
                     .filter(orderStatus -> orderStatus.name().equalsIgnoreCase(status))
                     .findFirst()
                     .orElse(OrderStatus.UNKNOWN)
+                    .name();
+        }
+    }
+
+    @AllArgsConstructor
+    public enum PaymentMethod {
+        MOMO,
+        CASH,
+        BANK,
+        UNKNOWN;
+
+        public static String getValue(String paymentMethod) {
+            return Arrays.stream(PaymentMethod.values())
+                    .filter(method -> method.name().equalsIgnoreCase(paymentMethod))
+                    .findFirst()
+                    .orElse(PaymentMethod.UNKNOWN)
                     .name();
         }
     }

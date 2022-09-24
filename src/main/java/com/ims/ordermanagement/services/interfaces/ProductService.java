@@ -7,14 +7,16 @@ import java.util.List;
 
 public interface ProductService extends DBService {
 
-    public List<Product> getAllProducts();
+    List<Product> getAllProducts();
 
-    public Product getProductBySlug(String slug);
+    Product getProductBySlug(String slug);
 
-    public void addNewProduct(Product product);
+    List<Product> getProductByCategory(List<String> category);
 
-    public void updateProduct(String slug, ProductDTO productDTO);
+    void addNewProduct(Product product);
 
-    public void deleteProduct(String slug);
+    void updateProduct(String slug, ProductDTO productDTO);
+
+    void deleteProduct(String slug);
 
 }

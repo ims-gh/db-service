@@ -1,5 +1,6 @@
 package com.ims.ordermanagement.services.interfaces;
 
+import com.ims.ordermanagement.models.OrderBody;
 import com.ims.ordermanagement.models.dto.OrderDTO;
 import com.ims.ordermanagement.models.entities.Order;
 
@@ -7,23 +8,33 @@ import java.util.List;
 
 public interface OrderService extends DBService {
 
-    public List<Order> getAllOrders();
+    List<Order> getAllOrders();
 
-    public Order getByOrderIds(List<String> ids);
+    List<Order> getByOrderIds(List<String> ids);
 
-    public List<Order> getByDeliveryDate(String dateStart, String dateEnd);
+    List<Order> getByDeliveryDate(String dateStart, String dateEnd);
 
-    public List<Order> getByOrderDate(String dateStart, String dateEnd);
+    List<Order> getByOrderDate(String dateStart, String dateEnd);
 
-    public List<Order> getByDeliveryLocations(List<String> location);
+    List<Order> getByDeliveryLocations(List<String> location);
 
-    public List<Order> getByOrderStatuses(List<String> statuses);
+    List<Order> getByOrderStatuses(List<String> statuses);
 
-    public String addNewOrder(Order order);
+    List<Order> getByDeliveryDateAndOrderStatuses(String dateStart, String dateEnd, List<String> statuses);
 
-    public void updateOrder(String id, OrderDTO orderDTO);
+    List<Order> getByOrderStatusesAndDeliveryLocations(List<String> statuses, List<String> locations);
 
-    public void deleteOrder(String id);
+    List<Order> getByBuyersName(String buyersName);
+
+    List<Order> getByRecipientsName(String recipientsName);
+
+    List<Order> getByPaymentMethod(String paymentMethod);
+
+    String addNewOrder(OrderBody orderBody);
+
+    void updateOrder(String id, OrderDTO orderDTO);
+
+    void deleteOrder(String id);
 
 
 

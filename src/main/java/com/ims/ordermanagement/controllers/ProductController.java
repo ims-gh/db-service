@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "v1")
 @AllArgsConstructor
@@ -33,6 +35,17 @@ public class ProductController {
                 .data(productServiceImpl.getProductBySlug(slug))
                 .build();
     }
+
+    @GetMapping("/product/category")
+    public ResponseEntity<Object> getProductByCategory(@RequestParam List<String> category){
+        return ResponseHandler
+                .builder()
+                .status(HttpStatus.FOUND)
+                .data(productServiceImpl.getProductByCategory(category))
+                .build();
+    }
+
+
 
     @PostMapping("/product")
     public ResponseEntity<Object> addNewProduct(@RequestBody Product product){
