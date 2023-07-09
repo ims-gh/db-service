@@ -5,8 +5,8 @@ import com.ims.ordermanagement.models.entities.DbEntity;
 public interface DBService {
 
 
-    default boolean isNotNullOrEmptyOrBlank(String value) {
-        return !(value == null || value.isEmpty() || value.isBlank());
+    default boolean isNotNullOrBlank(String value) {
+        return !(value == null || value.isBlank());
     }
 
     DbEntity findOrThrowError(Object id);

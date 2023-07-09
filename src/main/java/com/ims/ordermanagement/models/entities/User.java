@@ -14,7 +14,9 @@ import java.util.UUID;
 @ToString
 @Entity
 @Table(name = "users")
-@RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements DbEntity{
 
     @Id
@@ -53,26 +55,6 @@ public class User implements DbEntity{
     @Column(columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime updatedAt;
 
-    public User(String firstName, String lastName, LocalDate dob, String mobile, String email, String passwordHash, String userRole) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dob = dob;
-        this.mobile = mobile;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.userRole = userRole;
-    }
-
-    public User(String firstName, String lastName, LocalDate dob, String mobile, String email, String passwordHash, String userRole, LocalDateTime lastLogin) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dob = dob;
-        this.mobile = mobile;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.userRole = userRole;
-        this.lastLogin = lastLogin;
-    }
 
 }
 
