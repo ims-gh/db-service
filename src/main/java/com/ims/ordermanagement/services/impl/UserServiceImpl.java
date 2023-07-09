@@ -3,28 +3,28 @@ package com.ims.ordermanagement.services.impl;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ims.ordermanagement.exceptions.UserAlreadyExistsException;
 import com.ims.ordermanagement.exceptions.UserDoesNotExistException;
 import com.ims.ordermanagement.models.dto.UserDTO;
 import com.ims.ordermanagement.models.entities.User;
 import com.ims.ordermanagement.repository.UserRepository;
 import com.ims.ordermanagement.services.interfaces.UserService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -53,12 +53,12 @@ public class UserServiceImpl implements UserService {
         User user = findOrThrowError(originalEmail);
         log.info("Updating user with email {}", originalEmail);
 
-        if (isNotNullOrEmptyOrBlank(email) && !Objects.equals(user.getEmail(), email)) {
+        if (isNotNullOrBlank(email) && !Objects.equals(user.getEmail(), email)) {
             throwsErrorIfExists(email);
             user.setEmail(email);
-            userDTO.setEmail("");
         }
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
         try {

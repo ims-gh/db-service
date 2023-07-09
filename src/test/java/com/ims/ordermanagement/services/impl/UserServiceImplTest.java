@@ -1,18 +1,17 @@
-package com.ims.ordermanagement.services;
+package com.ims.ordermanagement.services.impl;
 
-import com.ims.ordermanagement.models.dto.UserDTO;
 import com.ims.ordermanagement.exceptions.UserAlreadyExistsException;
 import com.ims.ordermanagement.exceptions.UserDoesNotExistException;
+import com.ims.ordermanagement.models.dto.UserDTO;
 import com.ims.ordermanagement.models.entities.User;
 import com.ims.ordermanagement.repository.UserRepository;
-import com.ims.ordermanagement.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 class UserServiceImplTest {
 
-    @Mock
+    @MockBean
     private UserRepository userRepository;
 
-    @InjectMocks
+    @SpyBean
     private UserServiceImpl testUserServiceImpl;
 
     String email;
@@ -36,18 +35,17 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        testUserServiceImpl = new UserServiceImpl(userRepository);
+//        testUserServiceImpl = new UserServiceImpl(userRepository);
         email = "hello@gmail.com";
-        user = new User(
-                "hello",
-                "Hodey",
-                LocalDate.of(1990,05,23),
-                "020334859",
-                email,
-                "hdhf",
-                "admin",
-                LocalDateTime.of(2021,12,30,11,20,10)
-        );
+        user = User.builder()
+                .firstName("Dzifa")
+                .lastName("Hodey")
+                .dob(LocalDate.of(1990,05,23))
+                .email(email)
+                .mobile("020334859")
+                .passwordHash("hdhsamdklf")
+                .userRole("admin")
+                .build();
     }
 
     @Test
@@ -82,7 +80,7 @@ class UserServiceImplTest {
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.of(user));
         testUserServiceImpl.getUserByEmail(email);
-        assertTrue(testUserServiceImpl.getUserByEmail(email).equals(user));
+        assertEquals(testUserServiceImpl.getUserByEmail(email), user);
     }
 
     @Test
@@ -102,18 +100,18 @@ class UserServiceImplTest {
                 "hi@gmail.com",
                 "password123",
                 "customer",
-                LocalDateTime.of(2022,01,10,14,30,05));
+                LocalDateTime.of(2022, 1,10,14,30, 5));
 
         given(userRepository.findUserByEmail(user.getEmail()))
                 .willReturn(Optional.of(user));
         testUserServiceImpl.updateUser(email, updatedUser);
         assertAll(
-                () -> assertTrue(user.getFirstName().equals(updatedUser.getFirstName())),
-                () -> assertTrue(user.getLastName().equals(updatedUser.getLastName())),
-                () -> assertTrue(user.getMobile().equals(updatedUser.getMobile())),
-                () -> assertTrue(user.getEmail().equals(updatedUser.getEmail())),
-                () -> assertTrue(user.getPasswordHash().equals(updatedUser.getPasswordHash())),
-                () -> assertTrue(user.getUserRole().equals(updatedUser.getUserRole())),
+                () -> assertEquals(updatedUser.getFirstName(), user.getFirstName()),
+                () -> assertEquals(updatedUser.getLastName(), user.getLastName()),
+                () -> assertEquals(updatedUser.getMobile(), user.getMobile()),
+                () -> assertEquals(updatedUser.getEmail(), user.getEmail()),
+                () -> assertEquals(updatedUser.getPasswordHash(), user.getPasswordHash()),
+                () -> assertEquals(updatedUser.getUserRole(), user.getUserRole()),
                 () -> assertTrue(user.getLastLogin().isEqual(updatedUser.getLastLogin()))
                 );
     }
@@ -148,23 +146,22 @@ class UserServiceImplTest {
                 "admin",
                 LocalDateTime.of(2022,01,10,14,30,05));
 
-        User newUser = new User(
-                "ho",
-                "ho",
-                LocalDate.of(1990,05,23),
-                "02056334859",
-                newEmail,
-                "hdhf",
-                "admin",
-                LocalDateTime.of(2021,12,30,11,20,10)
-        );
+        User newUser = User.builder()
+                .firstName("Ho")
+                .lastName("Hodey")
+                .dob(LocalDate.of(1990,05,23))
+                .email(newEmail)
+                .mobile("020334859")
+                .passwordHash("hdhsamdklf")
+                .userRole("admin")
+                .build();
 
         given(userRepository.findUserByEmail(email))
                 .willReturn(Optional.of(user));
         given(userRepository.findUserByEmail(newEmail))
                 .willReturn(Optional.of(newUser));
        assertThrows(UserAlreadyExistsException.class,
-               () -> testUserServiceImpl.updateUser(email, updatedUser), "email taken");
+               () -> testUserServiceImpl.updateUser(email, updatedUser), "Account with email " + newEmail + " already exists");
 
     }
 

@@ -7,36 +7,33 @@ import com.ims.ordermanagement.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isA;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest
+@WebMvcTest(UserController.class)
 class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    private UserServiceImpl userServiceImpl;
+    private UserServiceImpl userService;
 
     private String email;
     private User ama;
@@ -45,26 +42,24 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         email = "hello@gmail.com";
-        ama = new User(
-                "Ama",
-                "Hodey",
-                LocalDate.of(1990, 05, 23),
-                "020334859",
-                email,
-                "hdhf",
-                "admin",
-                LocalDateTime.of(2021, 12, 30, 11, 20, 10)
-        );
-        kojo = new User(
-                "Kojo",
-                "Kay",
-                LocalDate.of(1990, 05, 23),
-                "0203342349",
-                "kojo@gmail.com",
-                "hdhf",
-                "user",
-                LocalDateTime.of(2021, 12, 30, 11, 20, 10, 23)
-        );
+        ama = User.builder()
+                .firstName("Ama")
+                .lastName("Hodey")
+                .dob(LocalDate.of(1990,05,23))
+                .email("ama@gmail.com")
+                .mobile("020334859")
+                .passwordHash("hdhsamdklf")
+                .userRole("admin")
+                .build();
+        kojo =User.builder()
+                .firstName("Kojo")
+                .lastName("Kay")
+                .dob(LocalDate.of(1990,05,23))
+                .email("kojo@gmail.com")
+                .mobile("020334859")
+                .passwordHash("hdhsamdklf")
+                .userRole("admin")
+                .build();
 
     }
 
@@ -74,9 +69,9 @@ class UserControllerTest {
         List<User> users = new ArrayList<>();
         users.add(ama);
         users.add(kojo);
-        when(userServiceImpl.getAllUsers()).thenReturn(users);
+        when(userService.getAllUsers()).thenReturn(users);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/")
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/users/")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data", hasSize(2)))
@@ -86,11 +81,11 @@ class UserControllerTest {
     @Test
     @DisplayName("should get user by email")
     void getUserByEmail() throws Exception {
-        userServiceImpl.addNewUser(kojo);
-        when(userServiceImpl.getUserByEmail("kojo@gmail.com")).thenReturn(kojo);
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/"+"kojo@gmail.com")
+        userService.addNewUser(kojo);
+        when(userService.getUserByEmail("kojo@gmail.com")).thenReturn(kojo);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user?email="+"kojo@gmail.com")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andExpect(jsonPath("data", isA(HashMap.class)))
                 .andDo(print());
     }
@@ -99,21 +94,11 @@ class UserControllerTest {
     @DisplayName("should add new user")
     void addNewUserTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        kojo = new User(
-                "Kojo",
-                "Kay",
-                LocalDate.of(1990, 05, 23),
-                "0203342349",
-                "kojo@gmail.com",
-                "hdhf",
-                "user"
-        );
-
-        userServiceImpl.addNewUser(kojo);
+               userService.addNewUser(kojo);
         objectMapper.findAndRegisterModules();
         String userJSON = objectMapper.writeValueAsString(kojo);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/")
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/user/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJSON))
                 .andExpect(status().isCreated());
@@ -126,11 +111,11 @@ class UserControllerTest {
         UserDTO updatedAma = new UserDTO(
                 "Amar", "Owusu", "020374839");
 
-        userServiceImpl.addNewUser(ama);
-        userServiceImpl.updateUser(email, updatedAma);
+        userService.addNewUser(ama);
+        userService.updateUser(email, updatedAma);
 
         String userJSON = objectMapper.writeValueAsString(updatedAma);
-        mockMvc.perform(MockMvcRequestBuilders.put("/user/" + email)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/v1/user/" + email)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJSON))
                 .andExpect(status().isOk());
@@ -139,9 +124,9 @@ class UserControllerTest {
     @Test
     @DisplayName("should delete user")
     void deleteUser() throws Exception {
-        userServiceImpl.addNewUser(kojo);
-        userServiceImpl.deleteUser("kojo@gmail.com");
-        mockMvc.perform(MockMvcRequestBuilders.delete("/user/" + "kojo@gmail.com")
+        userService.addNewUser(kojo);
+        userService.deleteUser("kojo@gmail.com");
+        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/user?email=" + "kojo@gmail.com")
                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
     }
