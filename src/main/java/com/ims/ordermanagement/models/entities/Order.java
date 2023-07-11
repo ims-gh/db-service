@@ -1,10 +1,9 @@
 package com.ims.ordermanagement.models.entities;
 
 import com.ims.ordermanagement.config.OrderIdGenerator;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ims.ordermanagement.models.OrderStatus;
+import com.ims.ordermanagement.models.PaymentMethod;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -93,19 +92,6 @@ public class Order implements DbEntity {
         orderItems.addAll(orderItemList);
     }
 
-    public void setDiscount(Double discount) {
-        this.discount = discount;
-        setTotal();
-    }
-
-    public void setTotal() {
-        this.total = (this.discount == 0.0) ? this.subTotal : this.subTotal * (1 - this.discount);
-    }
-
-    public void setSubTotal(List<OrderItem> orderItemList) {
-        orderItemList.forEach(item -> this.subTotal += item.getFinalPrice());
-    }
-
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = OrderStatus.getValue(orderStatus);
     }
@@ -114,37 +100,5 @@ public class Order implements DbEntity {
         this.paymentMethod = PaymentMethod.getValue(paymentMethod);
     }
 
-    @AllArgsConstructor
-    public enum OrderStatus {
-        UNPAID,
-        PAID,
-        DELIVERED,
-        PICKED_UP,
-        CANCELLED,
-        UNKNOWN;
 
-        public static String getValue(String status) {
-            return Arrays.stream(OrderStatus.values())
-                    .filter(orderStatus -> orderStatus.name().equalsIgnoreCase(status))
-                    .findFirst()
-                    .orElse(OrderStatus.UNKNOWN)
-                    .name();
-        }
-    }
-
-    @AllArgsConstructor
-    public enum PaymentMethod {
-        MOMO,
-        CASH,
-        BANK,
-        UNKNOWN;
-
-        public static String getValue(String paymentMethod) {
-            return Arrays.stream(PaymentMethod.values())
-                    .filter(method -> method.name().equalsIgnoreCase(paymentMethod))
-                    .findFirst()
-                    .orElse(PaymentMethod.UNKNOWN)
-                    .name();
-        }
-    }
 }
