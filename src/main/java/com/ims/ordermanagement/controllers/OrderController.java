@@ -2,7 +2,7 @@ package com.ims.ordermanagement.controllers;
 
 import com.ims.ordermanagement.exceptions.ResponseHandler;
 import com.ims.ordermanagement.models.OrderBody;
-import com.ims.ordermanagement.models.dto.OrderDTO;
+import com.ims.ordermanagement.models.dto.OrderBodyDTO;
 import com.ims.ordermanagement.models.entities.Order;
 import com.ims.ordermanagement.services.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class OrderController {
 
     @Autowired
-    OrderServiceImpl orderService;
+    private OrderServiceImpl orderService;
 
     @GetMapping("/orders")
     public ResponseEntity<Object> getAllOrders() {
@@ -35,7 +35,7 @@ public class OrderController {
     public ResponseEntity<Object> getOrderBy(@RequestParam Map<String, String> params) {
         return ResponseHandler
                 .builder()
-                .status(HttpStatus.OK)
+                .status(HttpStatus.FOUND)
                 .data(getOrdersByParams(params))
                 .build();
     }
@@ -52,12 +52,12 @@ public class OrderController {
 
     @PatchMapping("/order/{id}")
     public ResponseEntity<Object> updateOrder(@PathVariable("id") String id,
-                                              @RequestBody OrderDTO orderDTO) {
-        orderService.updateOrder(id, orderDTO);
+                                              @RequestBody OrderBodyDTO orderBodyDTO) {
+        orderService.updateOrder(id, orderBodyDTO);
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.OK)
-                .data(orderDTO)
+                .data(orderBodyDTO)
                 .message("Order successfully updated.")
                 .build();
     }

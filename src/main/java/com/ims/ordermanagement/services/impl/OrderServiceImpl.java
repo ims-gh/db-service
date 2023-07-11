@@ -3,8 +3,11 @@ package com.ims.ordermanagement.services.impl;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ims.ordermanagement.exceptions.OrderDoesNotExistException;
 import com.ims.ordermanagement.models.OrderBody;
+import com.ims.ordermanagement.models.OrderStatus;
+import com.ims.ordermanagement.models.dto.OrderBodyDTO;
 import com.ims.ordermanagement.models.dto.OrderDTO;
 import com.ims.ordermanagement.models.entities.Order;
 import com.ims.ordermanagement.models.entities.OrderItem;
@@ -23,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -61,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
             LocalDateTime endDate = datePair.getSecond();
             return orderRepository.findByDeliveryDateBetween(startDate, endDate).orElse(new ArrayList<>());
         }
-        log.info("Invalid delivery dates given: {} and {}", dateStart, dateEnd);
+        log.error("Invalid delivery dates given: {} and {}", dateStart, dateEnd);
         return new ArrayList<>();
     }
 
@@ -74,15 +78,16 @@ public class OrderServiceImpl implements OrderService {
             LocalDateTime endDate = datePair.getSecond();
             return orderRepository.findByOrderDateBetween(startDate, endDate).orElse(new ArrayList<>());
         }
-        log.info("Invalid order dates given: {} and {}", dateStart, dateEnd);
+        log.error("Invalid order dates given: {} and {}", dateStart, dateEnd);
         return new ArrayList<>();
     }
 
     @Override
     public List<Order> getByOrderStatuses(List<String> statuses) {
         log.info("Getting orders with status {}", statuses);
-        List<String> statusValues = new ArrayList<>();
-        statuses.forEach(status -> statusValues.add(Order.OrderStatus.getValue(status)));
+        List<String> statusValues = statuses.stream()
+                .map(OrderStatus::getValue)
+                .collect(Collectors.toList());
         return orderRepository.findByOrderStatusIn(statusValues).orElse(new ArrayList<>());
     }
 
@@ -106,47 +111,52 @@ public class OrderServiceImpl implements OrderService {
         log.info("Getting orders with delivery date between {} and {} and status {}", dateStart, dateEnd, statuses);
         Pair<LocalDateTime, LocalDateTime> datePair = dateFormatter(dateStart, dateEnd);
         List<String> statusValues = new ArrayList<>();
-        statuses.forEach(status -> statusValues.add(Order.OrderStatus.getValue(status)));
+        statuses.forEach(status -> statusValues.add(OrderStatus.getValue(status)));
         if (datePair != null) {
             LocalDateTime startDate = datePair.getFirst();
             LocalDateTime endDate = datePair.getSecond();
             return orderRepository.findByDeliveryDateBetweenAndOrderStatusIn(startDate, endDate, statusValues).orElse(new ArrayList<>());
         }
-        log.info("Invalid delivery dates {} and {}", dateStart, dateEnd);
+        log.error("Invalid delivery dates {} and {}", dateStart, dateEnd);
         return new ArrayList<>();
     }
 
     @Override
     public List<Order> getByOrderStatusesAndDeliveryLocations(List<String> statuses, List<String> locations){
         List<String> statusValues = new ArrayList<>();
-        statuses.forEach(status -> statusValues.add(Order.OrderStatus.getValue(status)));
+        statuses.forEach(status -> statusValues.add(OrderStatus.getValue(status)));
         return orderRepository.findByOrderStatusInAndDeliveryLocationIn(statusValues, locations).orElse(new ArrayList<>());
     }
 
 
     @Override
     public String addNewOrder(OrderBody orderBody) {
-        log.info("Adding new order with order items: {}", orderBody);
-        ObjectMapper mapper = new ObjectMapper();
+        log.info("Adding new order with order items: {}", orderBody.toString());
         List<OrderItem> orderItems = orderBody.getOrderItems();
         List<OrderItem> savedOrderItems = orderItemRepository.saveAll(orderItems);
         log.info("Order items saved : {}", savedOrderItems);
         Order order = orderBody.getOrder();
-        order.setSubTotal(savedOrderItems);
-        order.setTotal();
         order.addOrderItems(savedOrderItems);
-        Order savedOrder = orderRepository.save(orderBody.getOrder());
+        Order savedOrder = orderRepository.save(order);
         log.info("Order saved : {}", savedOrder);
         return savedOrder.getOrderId();
     }
 
     @Override
     @Transactional
-    public void updateOrder(String id, OrderDTO orderDTO) {
+    public void updateOrder(String id, OrderBodyDTO orderBodyDTO) {
         log.info("Finding order with id {}", id);
         Order order = findOrThrowError(id);
         log.info("Updating order {}", id);
+        OrderDTO orderDTO = orderBodyDTO.getOrderDTO();
+        List<OrderItem> newOrderItems = orderBodyDTO.getNewOrderItems();
+        log.info("Saving {} order item(s) and updating order {}", newOrderItems.size(), id);
+        orderItemRepository.saveAll(newOrderItems);
+        order.addOrderItems(newOrderItems);
+
+        log.info("Updating other details for order {}", id);
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
         try {

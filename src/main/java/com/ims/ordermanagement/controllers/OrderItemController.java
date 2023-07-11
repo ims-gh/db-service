@@ -4,17 +4,17 @@ import com.ims.ordermanagement.exceptions.ResponseHandler;
 import com.ims.ordermanagement.models.dto.OrderItemDTO;
 import com.ims.ordermanagement.models.entities.OrderItem;
 import com.ims.ordermanagement.services.impl.OrderItemServiceImpl;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "v1")
-@AllArgsConstructor
 public class OrderItemController {
 
-    private final OrderItemServiceImpl orderItemServiceImpl;
+    @Autowired
+    private OrderItemServiceImpl orderItemServiceImpl;
 
     @GetMapping("/order-items")
     public ResponseEntity<Object> getAllOrderItems(){

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,8 @@ public class OrderDTO implements DtoObject{
     private String recipientsName;
     private String recipientsNumber;
     private String deliveryLocation;
+    private String specificLocation;
+    private String googlePlusCode;
     private LocalDateTime deliveryDate;
     private String otherDetails;
     private Double discount;

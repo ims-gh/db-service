@@ -1,7 +1,7 @@
 package com.ims.ordermanagement.services.interfaces;
 
 import com.ims.ordermanagement.models.OrderBody;
-import com.ims.ordermanagement.models.dto.OrderDTO;
+import com.ims.ordermanagement.models.dto.OrderBodyDTO;
 import com.ims.ordermanagement.models.entities.Order;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public interface OrderService extends DBService {
 
     String addNewOrder(OrderBody orderBody);
 
-    void updateOrder(String id, OrderDTO orderDTO);
+    void updateOrder(String id, OrderBodyDTO orderBodyDTO);
 
     void deleteOrder(String id);
 

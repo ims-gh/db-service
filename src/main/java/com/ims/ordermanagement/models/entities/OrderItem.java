@@ -1,9 +1,6 @@
 package com.ims.ordermanagement.models.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -44,10 +41,5 @@ public class OrderItem implements DbEntity {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public void setDiscount(Double discount) {
-        this.discount = discount;
-        this.finalPrice = (discount == 0.0) ? this.price : this.price * (1 - discount);
-    }
 
 }
