@@ -4,6 +4,7 @@ import com.ims.ordermanagement.exceptions.ResponseHandler;
 import com.ims.ordermanagement.models.dto.OrderItemDTO;
 import com.ims.ordermanagement.models.entities.OrderItem;
 import com.ims.ordermanagement.services.impl.OrderItemServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ public class OrderItemController {
     @Autowired
     private OrderItemServiceImpl orderItemServiceImpl;
 
+    @ApiOperation(value = "Get a list of all order items")
     @GetMapping("/order-items")
     public ResponseEntity<Object> getAllOrderItems(){
         return ResponseHandler
@@ -25,6 +27,7 @@ public class OrderItemController {
                 .build();
     }
 
+    @ApiOperation(value = "Get order item by UUID")
     @GetMapping("/order-item")
     public ResponseEntity<Object> getOrderItemById(@RequestParam String uuid){
         return ResponseHandler
@@ -34,6 +37,7 @@ public class OrderItemController {
                 .build();
     }
 
+    @ApiOperation(value = "Add a new order item")
     @PostMapping("/order-item")
     public ResponseEntity<Object> addNewOrderItem(@RequestBody OrderItem orderItem){
         return ResponseHandler
@@ -44,6 +48,7 @@ public class OrderItemController {
                 .build();
     }
 
+    @ApiOperation(value = "Update an existing order item")
     @PatchMapping("/order-item/{uuid}")
     public ResponseEntity<Object> updateOrderItem(@PathVariable("uuid") String uuid,
                                                  @RequestBody OrderItemDTO orderItemDTO){
@@ -56,6 +61,7 @@ public class OrderItemController {
                 .build();
     }
 
+    @ApiOperation(value = "Delete an existing order item")
     @DeleteMapping("/order-item")
     public ResponseEntity<Object> deleteOrderItem(@RequestParam String uuid){
         orderItemServiceImpl.deleteOrderItem(uuid);

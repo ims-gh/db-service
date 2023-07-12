@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
-    @ApiOperation(value = "View a list of all users")
+    @ApiOperation(value = "Get a list of all users")
     @GetMapping("/users")
     public ResponseEntity<Object> getAllUsers(){
         return ResponseHandler
@@ -32,6 +32,7 @@ public class UserController {
                 .build();
     }
 
+    @ApiOperation(value = "Get a user by email")
     @GetMapping("/user")
     public ResponseEntity<Object> getUserByEmail(@RequestParam String email){
         return ResponseHandler
@@ -41,6 +42,7 @@ public class UserController {
                 .build();
     }
 
+    @ApiOperation(value = "Add a new user")
     @PostMapping("/user")
     public ResponseEntity<Object> addNewUser(@RequestBody User user){
         userServiceImpl.addNewUser(user);
@@ -52,6 +54,7 @@ public class UserController {
                 .build();
     }
 
+    @ApiOperation(value = "Update an existing user")
     @PatchMapping("/user/{email}")
     public ResponseEntity<Object> updateUser(@PathVariable("email") String email,
                                              @RequestBody UserDTO userDTO){
@@ -64,6 +67,7 @@ public class UserController {
                 .build();
     }
 
+    @ApiOperation(value = "Delete an existing user")
     @DeleteMapping("/user")
     public ResponseEntity<Object> deleteUser(@RequestParam String email){
         userServiceImpl.deleteUser(email);
