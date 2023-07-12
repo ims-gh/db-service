@@ -5,6 +5,7 @@ import com.ims.ordermanagement.models.OrderBody;
 import com.ims.ordermanagement.models.dto.OrderBodyDTO;
 import com.ims.ordermanagement.models.entities.Order;
 import com.ims.ordermanagement.services.impl.OrderServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class OrderController {
     @Autowired
     private OrderServiceImpl orderService;
 
+    @ApiOperation(value = "Get a list of all orders")
     @GetMapping("/orders")
     public ResponseEntity<Object> getAllOrders() {
         return ResponseHandler
@@ -31,6 +33,7 @@ public class OrderController {
                 .build();
     }
 
+    @ApiOperation(value = "Get order by parameters")
     @GetMapping("/order")
     public ResponseEntity<Object> getOrderBy(@RequestParam Map<String, String> params) {
         return ResponseHandler
@@ -40,6 +43,7 @@ public class OrderController {
                 .build();
     }
 
+    @ApiOperation(value = "Add a new order")
     @PostMapping("/order")
     public ResponseEntity<Object> addNewOrder(@RequestBody OrderBody orderBody) {
         return ResponseHandler
@@ -50,6 +54,7 @@ public class OrderController {
                 .build();
     }
 
+    @ApiOperation(value = "Update an existing order")
     @PatchMapping("/order/{id}")
     public ResponseEntity<Object> updateOrder(@PathVariable("id") String id,
                                               @RequestBody OrderBodyDTO orderBodyDTO) {
@@ -62,7 +67,7 @@ public class OrderController {
                 .build();
     }
 
-
+    @ApiOperation(value = "Delete an existing order")
     @DeleteMapping("/order")
     public ResponseEntity<Object> deleteOrder(@RequestParam String id) {
         orderService.deleteOrder(id);

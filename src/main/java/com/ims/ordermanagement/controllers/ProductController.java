@@ -4,6 +4,7 @@ import com.ims.ordermanagement.exceptions.ResponseHandler;
 import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.models.entities.Product;
 import com.ims.ordermanagement.services.impl.ProductServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class ProductController {
     @Autowired
     private ProductServiceImpl productServiceImpl;
 
+    @ApiOperation(value = "Get all products")
     @GetMapping("/products")
     public ResponseEntity<Object> getAllProducts(){
         return ResponseHandler
@@ -27,6 +29,7 @@ public class ProductController {
                 .build();
     }
 
+    @ApiOperation(value = "Get product by slug")
     @GetMapping("/product")
     public ResponseEntity<Object> getProductBySlug(@RequestParam String slug){
         return ResponseHandler
@@ -36,6 +39,7 @@ public class ProductController {
                 .build();
     }
 
+    @ApiOperation(value = "Get products by categories")
     @GetMapping("/product/category")
     public ResponseEntity<Object> getProductByCategory(@RequestParam List<String> category){
         return ResponseHandler
@@ -46,7 +50,7 @@ public class ProductController {
     }
 
 
-
+    @ApiOperation(value = "Add a new product")
     @PostMapping("/product")
     public ResponseEntity<Object> addNewProduct(@RequestBody Product product){
         productServiceImpl.addNewProduct(product);
@@ -58,6 +62,7 @@ public class ProductController {
                 .build();
     }
 
+    @ApiOperation(value = "Update an existing product")
     @PatchMapping("/product/{slug}")
     public ResponseEntity<Object> updateProduct(@PathVariable("slug") String slug,
                                                  @RequestBody ProductDTO productDTO){
@@ -70,6 +75,7 @@ public class ProductController {
                 .build();
     }
 
+    @ApiOperation(value = "Delete an existing product")
     @DeleteMapping("/product")
     public ResponseEntity<Object> deleteProduct(@RequestParam String slug){
         productServiceImpl.deleteProduct(slug);
