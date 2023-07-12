@@ -54,7 +54,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         try {
             mapper.updateValue(orderItem, orderItemDTO);
         } catch (JsonMappingException e) {
-            log.error("Exception occurred when updating order with id {}", uuid, e);
+            log.error("Exception occurred when updating order item with id {}", uuid, e);
         }
     }
 

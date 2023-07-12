@@ -11,6 +11,7 @@ import com.ims.ordermanagement.models.dto.OrderDTO;
 import com.ims.ordermanagement.models.entities.Order;
 import com.ims.ordermanagement.models.entities.OrderItem;
 import com.ims.ordermanagement.services.impl.OrderServiceImpl;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -74,10 +74,10 @@ class OrderControllerTest {
         orderBody = new OrderBody(order1, Arrays.asList(orderItem1));
     }
 
+    @SneakyThrows
     @Test
-    void getAllOrdersTest() throws Exception {
-        List<Order> orders = new ArrayList<>();
-        orders.add(order1);
+    void getAllOrdersTest() {
+        List<Order> orders = List.of(order1);
         when(orderService.getAllOrders()).thenReturn(orders);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/orders/")
@@ -87,8 +87,9 @@ class OrderControllerTest {
                 .andDo(print());
     }
 
+    @SneakyThrows
     @Test
-    void getOrderByIdTest() throws Exception {
+    void getOrderByIdTest() {
         when(orderService.getByOrderIds(List.of("1"))).thenReturn(List.of(order1));
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/order?id="+order1.getOrderId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -97,10 +98,10 @@ class OrderControllerTest {
                 .andDo(print());
     }
 
+    @SneakyThrows
     @Test
-    void addNewOrderTest() throws Exception {
+    void addNewOrderTest() {
         ObjectMapper objectMapper = new ObjectMapper();
-        orderService.addNewOrder(orderBody);
         objectMapper.findAndRegisterModules();
         String orderJSON = objectMapper.writeValueAsString(orderBody);
 
@@ -111,8 +112,9 @@ class OrderControllerTest {
         
     }
 
+    @SneakyThrows
     @Test
-    void updateOrderTest() throws Exception {
+    void updateOrderTest() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
@@ -136,7 +138,6 @@ class OrderControllerTest {
         orderBodyDTO.setOrderDTO(updatedOrder1);
 
         orderService.addNewOrder(orderBody);
-        orderService.updateOrder(order1.getOrderId(), orderBodyDTO);
 
         String orderJSON = mapper.writeValueAsString(updatedOrder1);
         mockMvc.perform(MockMvcRequestBuilders.patch("/v1/order/" + order1.getOrderId())
@@ -145,10 +146,10 @@ class OrderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @SneakyThrows
     @Test
-    void deleteOrderTest() throws Exception {
+    void deleteOrderTest() {
         orderService.addNewOrder(orderBody);
-        orderService.deleteOrder(order1.getOrderId());
         mockMvc.perform(MockMvcRequestBuilders.delete("/v1/order?id=" + order1.getOrderId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

@@ -1,16 +1,17 @@
 package com.ims.ordermanagement.models.entities;
 
-import lombok.AllArgsConstructor;
+import com.ims.ordermanagement.models.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,14 +21,11 @@ import java.util.UUID;
 public class Product implements DbEntity{
 
     @Id
-    @GeneratedValue
-    private UUID productId;
+    @Column(nullable = false)
+    private String slug;
 
     @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private String slug;
 
     @Column(nullable = false)
     private Double price;
@@ -48,6 +46,12 @@ public class Product implements DbEntity{
         this.category = Category.getValue(category);
     }
 
+    public void setPrice(Double price) {
+        if (price > 0.0) {
+            this.price = price;
+        }
+    }
+
     public Product(String name, String slug, Double price, String description, String category) {
         this.name = name;
         this.slug = slug;
@@ -56,21 +60,5 @@ public class Product implements DbEntity{
         this.category = category;
     }
 
-    @AllArgsConstructor
-    public enum Category {
-        FULL_CAKE,
-        CUPCAKES,
-        CAKE_SLICES,
-        EXTRAS,
-        UNKNOWN;
-
-        public static String getValue(String category) {
-            return Arrays.stream(Category.values())
-                    .filter(cat -> cat.name().equalsIgnoreCase(category))
-                    .findFirst()
-                    .orElse(Category.UNKNOWN)
-                    .name();
-        }
-    }
 
 }
