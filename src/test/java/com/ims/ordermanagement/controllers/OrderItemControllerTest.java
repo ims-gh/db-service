@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ims.ordermanagement.models.dto.OrderItemDTO;
 import com.ims.ordermanagement.models.entities.OrderItem;
 import com.ims.ordermanagement.services.impl.OrderItemServiceImpl;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,9 @@ class OrderItemControllerTest {
         orderItem1.setPrice(80.0);
     }
 
+    @SneakyThrows
     @Test
-    void getAllOrderItems() throws Exception {
+    void getAllOrderItems() {
         List<OrderItem> orderItems = new ArrayList<>();
         orderItems.add(orderItem1);
         when(orderItemService.getAllOrderItems()).thenReturn(orderItems);
@@ -60,8 +62,9 @@ class OrderItemControllerTest {
                 .andDo(print());
     }
 
+    @SneakyThrows
     @Test
-    void getOrderItemById() throws Exception {
+    void getOrderItemById() {
         when(orderItemService.getByOrderItemId(any())).thenReturn(orderItem1);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/order-item?uuid="+orderItem1.getOrderItemId().toString())
                         .accept(MediaType.APPLICATION_JSON))
@@ -70,10 +73,10 @@ class OrderItemControllerTest {
                 .andDo(print());
     }
 
+    @SneakyThrows
     @Test
-    void addNewOrderItem() throws Exception {
+    void addNewOrderItem() {
         ObjectMapper objectMapper = new ObjectMapper();
-        orderItemService.addNewOrderItem(orderItem1);
         objectMapper.findAndRegisterModules();
         String orderItemJSON = objectMapper.writeValueAsString(orderItem1);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/order-item/")
@@ -82,15 +85,14 @@ class OrderItemControllerTest {
                 .andExpect(status().isCreated());
     }
 
+    @SneakyThrows
     @Test
-    void updateOrderItem() throws Exception {
+    void updateOrderItem() {
+        orderItemService.addNewOrderItem(orderItem1);
         OrderItemDTO orderItemDTO = new OrderItemDTO();
         orderItemDTO.setInscription("Happy birthday babe");
 
         ObjectMapper objectMapper = new ObjectMapper();
-
-        orderItemService.addNewOrderItem(orderItem1);
-        orderItemService.updateOrderItem(orderItem1.getOrderItemId().toString(), orderItemDTO);
         String orderItemJSON = objectMapper.writeValueAsString(orderItemDTO);
         mockMvc.perform(MockMvcRequestBuilders.patch("/v1/order-item/" + orderItem1.getOrderItemId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,10 +100,10 @@ class OrderItemControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @SneakyThrows
     @Test
-    void deleteOrderItem() throws Exception {
+    void deleteOrderItem() {
         orderItemService.addNewOrderItem(orderItem1);
-        orderItemService.deleteOrderItem(orderItem1.getOrderItemId().toString());
         mockMvc.perform(MockMvcRequestBuilders.delete("/v1/order-item?uuid=" + orderItem1.getOrderItemId().toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

@@ -1,11 +1,11 @@
-package com.ims.ordermanagement.services;
+package com.ims.ordermanagement.services.impl;
 
-import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.exceptions.ProductAlreadyExistsException;
 import com.ims.ordermanagement.exceptions.ProductDoesNotExistException;
+import com.ims.ordermanagement.models.Category;
+import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.models.entities.Product;
 import com.ims.ordermanagement.repository.ProductRepository;
-import com.ims.ordermanagement.services.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({SpringExtension.class})
 class ProductServiceImplTest {
 
-    @Mock
+    @MockBean
     private ProductRepository productRepository;
 
-    @InjectMocks
+    @SpyBean
     private ProductServiceImpl productServiceImpl;
 
     Product sixCupcakes;
@@ -43,13 +43,13 @@ class ProductServiceImplTest {
                 "b6",
                 55.0,
                 "A box of 6 cupcakes with varied toppings",
-                Product.Category.CUPCAKES.name());
+                Category.CUPCAKES.name());
         eightInchSingle = new Product(
                 "8 inch single layer cake",
                 "8-inch-single",
                 120.0,
                 "8inch full cake",
-                Product.Category.FULL_CAKE.name());
+                Category.FULL_CAKE.name());
 
     }
 
@@ -82,7 +82,7 @@ class ProductServiceImplTest {
                     "6-inch-double",
                     140.0,
                     "6inch full cake",
-                    Product.Category.FULL_CAKE.name()
+                    Category.FULL_CAKE.name()
             );
             productServiceImpl.addNewProduct(sixInchDouble);
             verify(productRepository).save(productArgumentCaptor.capture());
@@ -107,7 +107,7 @@ class ProductServiceImplTest {
 
     @Nested
     @DisplayName("should find product by slug")
-    class getProductByName {
+    class getProductBySlug {
         @Test
         @DisplayName("given a valid/existing product")
         void getProductBySlugTest() {
@@ -148,8 +148,8 @@ class ProductServiceImplTest {
             productServiceImpl.updateProduct(slug, productDTO);
             assertAll(
                     () -> assertEquals("8 inch single layer full cake", eightInchSingle.getName()),
-                    () -> assertEquals(135.5F, eightInchSingle.getPrice()),
-                    () -> assertNotEquals(120.0F, eightInchSingle.getPrice())
+                    () -> assertEquals(135.5, eightInchSingle.getPrice()),
+                    () -> assertNotEquals(120.0, eightInchSingle.getPrice())
 
             );
         }
@@ -179,7 +179,7 @@ class ProductServiceImplTest {
             productServiceImpl.updateProduct(b6Slug, b6DTO);
             assertAll(
                     () -> assertEquals("Box of 6 Cupcakes", sixCupcakes.getName()),
-                    () -> assertNotEquals(0.0F, sixCupcakes.getPrice())
+                    () -> assertNotEquals(0.0, sixCupcakes.getPrice())
             );
         }
 

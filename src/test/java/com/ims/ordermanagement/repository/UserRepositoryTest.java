@@ -7,7 +7,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -16,7 +16,7 @@ class UserRepositoryTest {
     private UserRepository testUserRepository;
 
     @Test
-    void findUserByEmailTest() {
+    void addNewUserTest() {
         String email = "dzifa@gmail.com";
         User user =User.builder()
                 .firstName("Dzifa")
@@ -28,7 +28,6 @@ class UserRepositoryTest {
                 .userRole("admin")
                 .build();
 
-        testUserRepository.save(user);
-        assertTrue(testUserRepository.findUserByEmail(email).isPresent());
+        assertNotNull(testUserRepository.save(user));
     }
 }

@@ -1,7 +1,11 @@
 package com.ims.ordermanagement.services.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ims.ordermanagement.exceptions.ProductAlreadyExistsException;
 import com.ims.ordermanagement.exceptions.ProductDoesNotExistException;
+import com.ims.ordermanagement.models.Category;
 import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.models.entities.Product;
 import com.ims.ordermanagement.repository.ProductRepository;
@@ -37,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProductByCategory(List<String> category) {
         List<String> categories = new ArrayList<>();
-        category.forEach(cat -> categories.add(Product.Category.getValue(cat)));
+        category.forEach(cat -> categories.add(Category.getValue(cat)));
         log.info("Finding product with categories {}", categories);
         return productRepository.findByCategoryIn(categories).orElse(new ArrayList<>());
     }
@@ -52,31 +56,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void updateProduct(String slug, ProductDTO productDTO) {
-        log.info("Extracting product details");
-        String name = productDTO.getName();
-        Double price = productDTO.getPrice();
-        String description = productDTO.getDescription();
-        String category = productDTO.getCategory();
         log.info("Finding product with slug {}", slug);
         Product product = findOrThrowError(slug);
-        log.info("Updating product");
+        log.info("Updating product {}", slug);
 
-        if (isNotNullOrEmptyOrBlank(name) && !name.equals(product.getName())) {
-            throwsErrorIfProductExists(name);
-            product.setName(name);
-            log.info("Product name updated successfully");
-        }
-        if (isNotNullOrEmptyOrBlank(description) && !description.equals(product.getDescription())) {
-            product.setDescription(description);
-            log.info("Product description updated successfully");
-        }
-        if (isNotNullOrEmptyOrBlank(category) && !category.equals(product.getCategory())){
-            product.setCategory(category);
-            log.info("Product category updated successfully");
-        }
-        if (!(price <= 0.0) && !price.equals(product.getPrice())){
-            product.setPrice(price);
-            log.info("Product price updated successfully");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
+        try {
+            mapper.updateValue(product, productDTO);
+        } catch (JsonMappingException e) {
+            log.error("Exception occurred when updating product with slug {}", slug, e);
         }
     }
 

@@ -3,7 +3,10 @@ package com.ims.ordermanagement.models.entities;
 import com.ims.ordermanagement.config.OrderIdGenerator;
 import com.ims.ordermanagement.models.OrderStatus;
 import com.ims.ordermanagement.models.PaymentMethod;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,7 +14,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 

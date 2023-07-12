@@ -1,10 +1,10 @@
 package com.ims.ordermanagement.controllers;
 
-import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.exceptions.ResponseHandler;
+import com.ims.ordermanagement.models.dto.ProductDTO;
 import com.ims.ordermanagement.models.entities.Product;
 import com.ims.ordermanagement.services.impl.ProductServiceImpl;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "v1")
-@AllArgsConstructor
 public class ProductController {
 
-    private final ProductServiceImpl productServiceImpl;
+    @Autowired
+    private ProductServiceImpl productServiceImpl;
 
     @GetMapping("/products")
     public ResponseEntity<Object> getAllProducts(){
@@ -28,7 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/product")
-    public ResponseEntity<Object> getProductByName(@RequestParam String slug){
+    public ResponseEntity<Object> getProductBySlug(@RequestParam String slug){
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.FOUND)
